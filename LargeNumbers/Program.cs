@@ -52,7 +52,6 @@ namespace LargeNumbers
             foreach (KeyGenerator key in keys)
             {
                 heck.Brute(key.Key);
-                Console.WriteLine($"The key was found. Brute time: {heck.BruteTime}");
             }
         }
     }
@@ -79,16 +78,16 @@ namespace LargeNumbers
         {
             double a;
             int i = 0;
-            BigInteger rez = 0;
+            BigInteger result = 0;
 
             while (true)
             {
-                if (((double)(KeySpace / BigInteger.Pow(10, i))) == double.PositiveInfinity)
+                if ((double)(BigInteger.Divide(BigInteger.Pow(10, ((int)BigInteger.Log10(KeySpace))), BigInteger.Pow(10, i))) == double.PositiveInfinity)
                 {
                     i++;
                     continue;
                 }
-                a = (double)(KeySpace / BigInteger.Pow(10, i));
+                a = (double)(BigInteger.Divide(BigInteger.Pow(10, ((int)BigInteger.Log10(KeySpace))), BigInteger.Pow(10, i)));
                 break;
             }
 
@@ -96,21 +95,22 @@ namespace LargeNumbers
             {
                 if (k >= 0)
                 {
-                    rez += (((BigInteger)(a * (rand.NextDouble()))) * BigInteger.Pow(10, k));
+                    result += (((BigInteger)(a * (rand.NextDouble()))) * BigInteger.Pow(10, k));
                 }
                 else
                 {
-                    rez +=  (((BigInteger)(a * (rand.NextDouble()))) / BigInteger.Pow(10, Math.Abs(k)));
+                    result += (((BigInteger)((double)BigInteger.Log10(KeySpace) * (rand.NextDouble()))) / BigInteger.Pow(10, Math.Abs(k)));
                 }
             }
-            Key = rez;
+
+            Key = result;
         }
     }
 
     internal class Bruteforcer
     {
         private Stopwatch time = new();
-        internal BigInteger FoundKey { get; set; }
+        internal BigInteger FoundKey { get; set; } = 0x0;
         internal TimeSpan BruteTime { get; set; }
 
         internal void Brute(BigInteger key)
@@ -122,10 +122,11 @@ namespace LargeNumbers
                 {
                     break;
                 }
-                FoundKey++;
+                FoundKey += 0x1;
             }
+
             time.Stop();
-            BruteTime = time.Elapsed;
+            Console.WriteLine($"The key was found. Brute time: {time.Elapsed}");
         }
     }
 }
